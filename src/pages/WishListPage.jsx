@@ -3,11 +3,11 @@ import Container from "react-bootstrap/Container";
 import { Col, Row } from "react-bootstrap";
 import Stack from "react-bootstrap/Stack";
 
-import { CartContext } from "../CartContext";
+import { AppContext } from "../context";
 import ProductCard from "../components/ProductCard";
 
 function WishListPage() {
-  const { wishList } = useContext(CartContext);
+  const { wishList } = useContext(AppContext);
 
   if (Object.keys(wishList).length === 0) {
     return (

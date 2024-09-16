@@ -5,23 +5,34 @@ import ProductList from "./pages/ProductList";
 import CartPage from "./pages/CartPage";
 import "./App.css";
 import { useEffect, useState } from "react";
-import { CartContext } from "./CartContext";
+import { AppContext } from "./context";
 import WishListPage from "./pages/WishListPage";
+import LoginPage from "./pages/LoginPage";
+import { getLocalStorage, getSessionStorage, updateLocalStorage } from "./lib/helpers";
+import NotFoundPage from "./pages/NotFoundPage";
+import ProtectedRoute from "./pages/ProtectedRoute";
 function App() {
+  const [firstRender, setFirstRender] = useState(true);
   const [cart, setCart] = useState({});
   const [wishList, setWishList] = useState({});
-  const [firstRender, setFirstRender] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isLogged, setIsLogged] = useState(false);
 
   /** Synchronizing with Local Storage */
   useEffect(() => {
     function setDataFromLocalStorage() {
-      const cartFromLocalStorage = localStorage.getItem("cart");
-      const wishListFromLocalStorage = localStorage.getItem("wishList");
+      const cartFromLocalStorage = getLocalStorage("cart");
+      const wishListFromLocalStorage = getLocalStorage("wishList");
+      const userFromLocalStorage = getLocalStorage("user") || getSessionStorage("user");
+      if (userFromLocalStorage) {
+        setUser(userFromLocalStorage);
+        setIsLogged(true);
+      }
       if (cartFromLocalStorage) {
-        setCart(JSON.parse(cartFromLocalStorage));
+        setCart(cartFromLocalStorage);
       }
       if (wishListFromLocalStorage) {
-        setWishList(JSON.parse(wishListFromLocalStorage));
+        setWishList(wishListFromLocalStorage);
       }
       setFirstRender(false);
     }
@@ -33,9 +44,6 @@ function App() {
     }
   }, [cart, wishList, firstRender]);
 
-  const updateLocalStorage = (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  };
   const addToCart = (product) => {
     const strId = String(product.id);
     if (cart[strId]) {
@@ -65,7 +73,6 @@ function App() {
   const updateCartQty = (productId, qty) => {
     const strId = String(productId);
     if (qty < 1) {
-      removeFromCart(productId);
       return;
     }
 
@@ -81,29 +88,48 @@ function App() {
       }));
     }
   };
+
+  const toggleWish = (product) => {
+    setWishList((prevState) => {
+      const inWishList = prevState[product.id];
+      if (inWishList) {
+        const newState = { ...prevState };
+        delete newState[product.id];
+        return newState;
+      } else {
+        return { ...prevState, [product.id]: product };
+      }
+    });
+  };
   return (
-<CartContext.Provider
+    <AppContext.Provider
       value={{
+        currency: "EGP",
         cart,
         addToCart,
         removeFromCart,
         wishList,
         toggleWish,
         updateCartQty,
+        user,
+        setUser,
+        isLogged,
+        setIsLogged,
       }}
     >
       <BrowserRouter>
-        <div>
-          <CustomNavbar />
-
-          <Routes>
+        <CustomNavbar />
+        <Routes>
+          <Route path="login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute isLogged={isLogged} />}>
             <Route path="cart" element={<CartPage />} />
             <Route path="wishlist" element={<WishListPage />} />
             <Route path="/" element={<ProductList />} />
-          </Routes>
-        </div>
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
-    </CartContext.Provider>
+    </AppContext.Provider>
   );
 }
 

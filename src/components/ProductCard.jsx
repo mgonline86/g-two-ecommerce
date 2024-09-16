@@ -1,18 +1,21 @@
 import { useContext } from "react";
-import { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import { CartContext } from "../CartContext";
+import { AppContext } from "../context";
 
 function ProductCard({ product }) {
-  const { addToCart, wishList, toggleWish } = useContext(CartContext);
+  const { addToCart, wishList, toggleWish, currency } = useContext(AppContext);
+  const { name, price, description } = product;
   return (
-    <Card className="mx-auto" style={{ width: "18rem" }}>
-      <Card.Img variant="top" src="https://placehold.co/600x400" />
+    <Card className="mx-auto" style={{ maxWidth: "18rem" }}>
+      <Card.Img variant="top" src={product.image} />
       <Card.Body>
         <Card.Title>{name}</Card.Title>
         <Card.Text>
-          {description} -{price}EGP
+          {description}
+        </Card.Text>
+        <Card.Text>
+          {price}{currency}
         </Card.Text>
         <div className="d-flex align-items-center justify-content-between">
           <Button
