@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import Container from "react-bootstrap/Container";
 import { Button, Col, Row } from "react-bootstrap";
-import Stack from "react-bootstrap/Stack";
 
 import { AppContext } from "../context";
 import ProductCard from "../components/ProductCard";
