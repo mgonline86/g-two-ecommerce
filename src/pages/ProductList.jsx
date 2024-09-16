@@ -9,8 +9,8 @@ function ProductList() {
     <Container className="my-5">
       <Row xs={1} md={2} lg={3} xl={4} className="g-4">
         {products.map((item, idx) => (
-          <Col key={idx}>
-            <ProductCard product={item} />
+          <Col key={item.id}>
+            <ProductCard product={item} order={idx} />
           </Col>
         ))}
       </Row>

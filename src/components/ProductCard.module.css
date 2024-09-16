@@ -1,0 +1,8 @@
+.productCard {
+  max-width: 18rem;
+  transition: 0.3s;
+}
+
+.productCard:hover {
+  scale: 1.02;
+}

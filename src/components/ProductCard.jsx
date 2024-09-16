@@ -2,20 +2,27 @@ import { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { AppContext } from "../context";
+import styles from "./ProductCard.module.css";
 
-function ProductCard({ product }) {
+function ProductCard({ product, order }) {
   const { addToCart, wishList, toggleWish, currency } = useContext(AppContext);
   const { name, price, description } = product;
   return (
-    <Card className="mx-auto" style={{ maxWidth: "18rem" }}>
-      <Card.Img variant="top" src={product.image} />
+    <Card className={`mx-auto shadow rounded-4 ${styles.productCard}`} style={{ maxWidth: "18rem" }}>
+      <Card.Img
+        variant="top"
+        className="img-fluid"
+        src={product.image}
+        alt={name}
+        width={600}
+        height={400}
+        loading={order > 3 ? "lazy" : "eager"}
+      />
       <Card.Body>
         <Card.Title>{name}</Card.Title>
-        <Card.Text>
-          {description}
-        </Card.Text>
-        <Card.Text>
-          {price}{currency}
+        <Card.Text>{description}</Card.Text>
+        <Card.Text className="fs-3 fw-bolder">
+          {price} {currency}
         </Card.Text>
         <div className="d-flex align-items-center justify-content-between">
           <Button
@@ -23,7 +30,7 @@ function ProductCard({ product }) {
             onClick={() => {
               addToCart(product);
             }}
-            className="d-flex align-items-center gap-2"
+            className="d-flex align-items-center gap-2 text-uppercase"
           >
             Add to cart
             <svg

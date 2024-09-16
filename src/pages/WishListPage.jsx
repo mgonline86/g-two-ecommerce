@@ -1,19 +1,23 @@
 import { useContext } from "react";
 import Container from "react-bootstrap/Container";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import Stack from "react-bootstrap/Stack";
 
 import { AppContext } from "../context";
 import ProductCard from "../components/ProductCard";
+import { Link } from "react-router-dom";
 
 function WishListPage() {
   const { wishList } = useContext(AppContext);
 
   if (Object.keys(wishList).length === 0) {
     return (
-      <Stack className="my-5">
-        <h1 className="text-center">WishList is empty!</h1>
-      </Stack>
+      <div className="container my-5 text-center">
+        <h1 className="mb-3">Wishlist is empty!</h1>
+        <Button className="fw-bold" variant="primary" as={Link} to="/">
+          &larr; Continue Shopping
+        </Button>
+      </div>
     );
   }
 
