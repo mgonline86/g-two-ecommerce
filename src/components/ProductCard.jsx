@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { CartContext } from "../CartContext";
@@ -9,9 +10,9 @@ function ProductCard({ product }) {
     <Card className="mx-auto" style={{ width: "18rem" }}>
       <Card.Img variant="top" src="https://placehold.co/600x400" />
       <Card.Body>
-        <Card.Title>{product.name}</Card.Title>
+        <Card.Title>{name}</Card.Title>
         <Card.Text>
-          {product.description} -{product.price}EGP
+          {description} -{price}EGP
         </Card.Text>
         <div className="d-flex align-items-center justify-content-between">
           <Button

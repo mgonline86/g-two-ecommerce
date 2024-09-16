@@ -43,10 +43,11 @@ const productList = [
   },
 ];
 function ProductList() {
+  const { products } = useContext(AppContext);
   return (
     <Container className="my-5">
       <Row xs={1} md={2} lg={3} className="g-4">
-        {productList.map((item, idx) => (
+        {products.map((item, idx) => (
           <Col key={idx}>
             <ProductCard product={item} />
           </Col>

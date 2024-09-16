@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { Badge } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -10,7 +12,11 @@ function CustomNavbar() {
   const { cart, wishList } = useContext(CartContext);
   return (
     <Navbar bg="dark" data-bs-theme="dark" sticky="top">
+    <Navbar bg="dark" data-bs-theme="dark" sticky="top">
       <Container>
+        <Navbar.Brand as={Link} to="/">
+          Ecommerce
+        </Navbar.Brand>
         <Navbar.Brand as={Link} to="/">
           Ecommerce
         </Navbar.Brand>
