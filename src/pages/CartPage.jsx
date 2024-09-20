@@ -9,9 +9,9 @@ import ToastContext from "../contexts/ToastContext";
 import AuthContext from "../contexts/AuthContext";
 
 function CartPage() {
-  const { cart, currency } = useContext(AppContext);
+  const { cart, currency, setCart } = useContext(AppContext);
   const { setToasts } = useContext(ToastContext);
-  const { isLogged, handleCloseCart, setCart } = useContext(AuthContext);
+  const { isLogged } = useContext(AuthContext);
   const lineItems = useMemo(() => Object.values(cart), [cart]);
   const total = useMemo(
     () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),
@@ -20,7 +20,6 @@ function CartPage() {
 
   const handleCheckout = () => {
     setCart({});
-    handleCloseCart();
     setToasts((prev) => [
       ...prev,
       {

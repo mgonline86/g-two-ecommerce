@@ -62,7 +62,7 @@ function CustomNavbar() {
           <>
             <div className="text-white">Welcome {user.name}</div>
             <Nav>
-              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+              <Nav.Link onClick={handleLogout} className="text-danger">Logout</Nav.Link>
             </Nav>
           </>
         ) : (

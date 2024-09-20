@@ -113,6 +113,7 @@ export default function CartDrawer() {
                       variant="warning"
                       as={Link}
                       to="/login"
+                      onClick={handleCloseCart}
                     >
                       Login to checkout
                     </Button>
