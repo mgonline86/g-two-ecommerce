@@ -1,5 +1,3 @@
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import ToggleButton from "react-bootstrap/ToggleButton";
 import Container from "react-bootstrap/Container";
 import { useContext, useMemo } from "react";
 import { Button, Table } from "react-bootstrap";
@@ -9,12 +7,19 @@ import { AppContext } from "../context";
 import { Link } from "react-router-dom";
 
 function CartPage() {
-  const { cart, currency } = useContext(AppContext);
+  const { cart, currency, isLogged, handleCloseCart, setCart } =
+    useContext(AppContext);
   const lineItems = useMemo(() => Object.values(cart), [cart]);
   const total = useMemo(
     () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),
     [lineItems]
   );
+
+  const handleCheckout = () => {
+    setCart({});
+    handleCloseCart();
+  };
+  
   if (!lineItems.length)
     return (
       <div className="container my-5 text-center">
@@ -56,6 +61,26 @@ function CartPage() {
           </tr>
         </tfoot>
       </Table>
+      <div className="d-flex justify-content-center">
+        {isLogged ? (
+          <Button
+            className="mx-auto text-uppercase"
+            variant="success"
+            onClick={handleCheckout}
+          >
+            Checkout
+          </Button>
+        ) : (
+          <Button
+            className="mx-auto text-uppercase"
+            variant="warning"
+            as={Link}
+            to="/login"
+          >
+            Login to checkout
+          </Button>
+        )}
+      </div>
     </Container>
   );
 }

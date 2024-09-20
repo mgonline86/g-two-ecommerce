@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import { updateLocalStorage } from "../lib/helpers";
 
 export default function LoginPage() {
-  const { setUser, isLogged, setIsLogged } = useContext(AppContext);
+  const { setUser, isLogged, setIsLogged, setToasts } = useContext(AppContext);
 
   if (isLogged) {
     return <Navigate to="/" />;
@@ -18,13 +18,21 @@ export default function LoginPage() {
     // const password = formData.get("password");
     const rememberMe = formData.get("rememberMe");
     const user = { email, name: "Guest" };
-    setUser(user);
-    setIsLogged(true);
     if (rememberMe) {
       updateLocalStorage("user", user);
     } else {
       sessionStorage.setItem("user", JSON.stringify(user));
     }
+    setToasts((prev) => [
+      ...prev,
+      {
+        variant: "info",
+        title: "Success",
+        message: `Welcome ${user.name}!`,
+      },
+    ]);
+    setUser(user);
+    setIsLogged(true);
   };
 
   return (

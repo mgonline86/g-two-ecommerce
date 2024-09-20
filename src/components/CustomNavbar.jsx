@@ -9,7 +9,7 @@ import { deleteLocalStorage, deleteSessionStorage } from "../lib/helpers";
 
 function CustomNavbar() {
   const location = useLocation();
-  const { cart, wishList, isLogged, user, setIsLogged, setUser } =
+  const { cart, wishList, isLogged, user, setIsLogged, setUser, setToasts } =
     useContext(AppContext);
 
   const cartCount = useMemo(() => {
@@ -26,6 +26,14 @@ function CustomNavbar() {
     setUser(null);
     deleteLocalStorage("user");
     deleteSessionStorage("user");
+    setToasts((prev) => [
+      ...prev,
+      {
+        variant: "info",
+        title: "Success",
+        message: "Logout successfully!",
+      },
+    ]);
   };
 
   return (
@@ -57,7 +65,7 @@ function CustomNavbar() {
           </>
         ) : (
           <Nav>
-            <Nav.Link as={Link} to="login">
+            <Nav.Link as={Link} to="login" className="text-white">
               Login
             </Nav.Link>
           </Nav>

@@ -5,7 +5,8 @@ import { AppContext } from "../context";
 import styles from "./ProductCard.module.css";
 
 function ProductCard({ product, order }) {
-  const { addToCart, wishList, toggleWish, currency } = useContext(AppContext);
+  const { addToCart, wishList, toggleWish, currency, handleShowCart } =
+    useContext(AppContext);
   const { name, price, description } = product;
   return (
     <Card
@@ -32,6 +33,7 @@ function ProductCard({ product, order }) {
             variant="primary"
             onClick={() => {
               addToCart(product);
+              handleShowCart();
             }}
             className="d-flex align-items-center gap-2 text-uppercase"
           >

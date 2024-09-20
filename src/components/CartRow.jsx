@@ -6,7 +6,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 
 import { AppContext } from "../context";
 
-function CartRow({ lineItem }) {
+function CartRow({ lineItem, hidePrice }) {
   const { removeFromCart, updateCartQty, currency } = useContext(AppContext);
   const { product, qty } = lineItem;
   const { id, name, price, image } = product;
@@ -31,7 +31,11 @@ function CartRow({ lineItem }) {
         <Image src={image} thumbnail style={{ width: "100px" }} />
       </td>
       <td>{name}</td>
-      <td>{price} {currency}</td>
+      {!hidePrice && (
+        <td>
+          {price} {currency}
+        </td>
+      )}
       <td>
         <InputGroup size="sm">
           <Button
@@ -59,7 +63,9 @@ function CartRow({ lineItem }) {
           </Button>
         </InputGroup>
       </td>
-      <td>{total} {currency}</td>
+      <td>
+        {total} {currency}
+      </td>
       <td>
         <Button variant="danger" onClick={() => removeFromCart(id)}>
           <svg

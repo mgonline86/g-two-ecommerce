@@ -8,22 +8,36 @@ import { useEffect, useState } from "react";
 import { AppContext } from "./context";
 import WishListPage from "./pages/WishListPage";
 import LoginPage from "./pages/LoginPage";
-import { getLocalStorage, getSessionStorage, updateLocalStorage } from "./lib/helpers";
+import {
+  getLocalStorage,
+  getSessionStorage,
+  updateLocalStorage,
+} from "./lib/helpers";
 import NotFoundPage from "./pages/NotFoundPage";
-import ProtectedRoute from "./pages/ProtectedRoute";
+// import ProtectedRoute from "./pages/ProtectedRoute";
+import CartDrawer from "./components/CartDrawer";
+import { ToastContainer } from "react-bootstrap";
+import CustomToast from "./components/CustomToast";
 function App() {
   const [firstRender, setFirstRender] = useState(true);
-  const [cart, setCart] = useState({});
+
   const [wishList, setWishList] = useState({});
+
   const [user, setUser] = useState(null);
   const [isLogged, setIsLogged] = useState(false);
+
+  const [cart, setCart] = useState({});
+  const [showCart, setShowCart] = useState(false);
+  const handleCloseCart = () => setShowCart(false);
+  const handleShowCart = () => setShowCart(true);
 
   /** Synchronizing with Local Storage */
   useEffect(() => {
     function setDataFromLocalStorage() {
       const cartFromLocalStorage = getLocalStorage("cart");
       const wishListFromLocalStorage = getLocalStorage("wishList");
-      const userFromLocalStorage = getLocalStorage("user") || getSessionStorage("user");
+      const userFromLocalStorage =
+        getLocalStorage("user") || getSessionStorage("user");
       if (userFromLocalStorage) {
         setUser(userFromLocalStorage);
         setIsLogged(true);
@@ -101,6 +115,9 @@ function App() {
       }
     });
   };
+
+  const [toasts, setToasts] = useState([]);
+
   return (
     <AppContext.Provider
       value={{
@@ -113,20 +130,35 @@ function App() {
         updateCartQty,
         user,
         setUser,
+        setCart,
         isLogged,
         setIsLogged,
+        handleCloseCart,
+        handleShowCart,
+        showCart,
+        setToasts,
       }}
     >
       <BrowserRouter>
+        <CartDrawer />
         <CustomNavbar />
+        <ToastContainer position="bottom-end" className="p-3 position-fixed end-0 bottom-0">
+          {toasts.map((toast, idx) => (
+            <CustomToast
+              key={idx}
+              title={toast.title}
+              message={toast.message}
+              variant={toast.variant}
+            />
+          ))}
+        </ToastContainer>
         <Routes>
           <Route path="login" element={<LoginPage />} />
-          <Route element={<ProtectedRoute isLogged={isLogged} />}>
-            <Route path="cart" element={<CartPage />} />
-            <Route path="wishlist" element={<WishListPage />} />
-            <Route path="/" element={<ProductList />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
+          <Route path="cart" element={<CartPage />} />
+          <Route path="wishlist" element={<WishListPage />} />
+          <Route path="/" element={<ProductList />} />
+          <Route path="*" element={<NotFoundPage />} />
+          {/* <Route element={<ProtectedRoute isLogged={isLogged} />}></Route> */}
         </Routes>
       </BrowserRouter>
     </AppContext.Provider>
