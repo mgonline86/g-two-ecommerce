@@ -2,7 +2,7 @@ import { useContext } from "react";
 import Container from "react-bootstrap/Container";
 import { Button, Col, Row } from "react-bootstrap";
 
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 import ProductCard from "../components/ProductCard";
 import { Link } from "react-router-dom";
 

@@ -1,11 +1,13 @@
 import { useContext } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 import { Navigate } from "react-router-dom";
 import { updateLocalStorage } from "../lib/helpers";
+import ToastContext from "../contexts/ToastContext";
 
 export default function LoginPage() {
-  const { setUser, isLogged, setIsLogged, setToasts } = useContext(AppContext);
+  const { setUser, isLogged, setIsLogged } = useContext(AppContext);
+  const { setToasts } = useContext(ToastContext);
 
   if (isLogged) {
     return <Navigate to="/" />;

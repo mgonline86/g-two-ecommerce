@@ -4,14 +4,15 @@ import Navbar from "react-bootstrap/Navbar";
 import { Link, useLocation } from "react-router-dom";
 import Badge from "react-bootstrap/Badge";
 import { useContext, useMemo } from "react";
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 import { deleteLocalStorage, deleteSessionStorage } from "../lib/helpers";
+import ToastContext from "../contexts/ToastContext";
 
 function CustomNavbar() {
   const location = useLocation();
-  const { cart, wishList, isLogged, user, setIsLogged, setUser, setToasts } =
+  const { cart, wishList, isLogged, user, setIsLogged, setUser } =
     useContext(AppContext);
-
+  const { setToasts } = useContext(ToastContext);
   const cartCount = useMemo(() => {
     const sum = Object.values(cart).reduce((a, b) => a + b.qty, 0);
     return sum > 99 ? "99+" : sum;

@@ -1,13 +1,15 @@
 import { useContext, useMemo } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 import CartRow from "./CartRow";
 import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import ToastContext from "../contexts/ToastContext";
 
 export default function CartDrawer() {
-  const { showCart, handleCloseCart, cart, currency, setCart, isLogged, setToasts } =
+  const { showCart, handleCloseCart, cart, currency, setCart, isLogged } =
     useContext(AppContext);
+  const { setToasts } = useContext(ToastContext);
   const lineItems = useMemo(() => Object.values(cart), [cart]);
   const total = useMemo(
     () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 import styles from "./ProductCard.module.css";
 
 function ProductCard({ product, order }) {

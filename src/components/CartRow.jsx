@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 
-import { AppContext } from "../context";
+import AppContext from "../contexts/AppContext";
 
 function CartRow({ lineItem, hidePrice }) {
   const { removeFromCart, updateCartQty, currency } = useContext(AppContext);
