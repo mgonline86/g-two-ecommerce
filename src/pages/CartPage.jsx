@@ -6,11 +6,12 @@ import CartRow from "../components/CartRow";
 import AppContext from "../contexts/AppContext";
 import { Link } from "react-router-dom";
 import ToastContext from "../contexts/ToastContext";
+import AuthContext from "../contexts/AuthContext";
 
 function CartPage() {
-  const { cart, currency, isLogged, handleCloseCart, setCart } =
-    useContext(AppContext);
+  const { cart, currency } = useContext(AppContext);
   const { setToasts } = useContext(ToastContext);
+  const { isLogged, handleCloseCart, setCart } = useContext(AuthContext);
   const lineItems = useMemo(() => Object.values(cart), [cart]);
   const total = useMemo(
     () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),

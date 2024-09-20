@@ -5,11 +5,13 @@ import CartRow from "./CartRow";
 import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ToastContext from "../contexts/ToastContext";
+import AuthContext from "../contexts/AuthContext";
 
 export default function CartDrawer() {
-  const { showCart, handleCloseCart, cart, currency, setCart, isLogged } =
+  const { showCart, handleCloseCart, cart, currency, setCart } =
     useContext(AppContext);
   const { setToasts } = useContext(ToastContext);
+  const { isLogged } = useContext(AuthContext);
   const lineItems = useMemo(() => Object.values(cart), [cart]);
   const total = useMemo(
     () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),

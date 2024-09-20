@@ -7,12 +7,13 @@ import { useContext, useMemo } from "react";
 import AppContext from "../contexts/AppContext";
 import { deleteLocalStorage, deleteSessionStorage } from "../lib/helpers";
 import ToastContext from "../contexts/ToastContext";
+import AuthContext from "../contexts/AuthContext";
 
 function CustomNavbar() {
   const location = useLocation();
-  const { cart, wishList, isLogged, user, setIsLogged, setUser } =
-    useContext(AppContext);
+  const { cart, wishList } = useContext(AppContext);
   const { setToasts } = useContext(ToastContext);
+  const { isLogged, user, setIsLogged, setUser } = useContext(AuthContext);
   const cartCount = useMemo(() => {
     const sum = Object.values(cart).reduce((a, b) => a + b.qty, 0);
     return sum > 99 ? "99+" : sum;

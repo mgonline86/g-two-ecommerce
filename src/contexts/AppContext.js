@@ -1,5 +1,8 @@
 import { createContext, useEffect, useState } from "react";
-import { getLocalStorage, getSessionStorage, updateLocalStorage } from "../lib/helpers";
+import {
+  getLocalStorage,
+  updateLocalStorage,
+} from "../lib/helpers";
 
 const AppContext = createContext();
 
@@ -7,9 +10,6 @@ export const AppProvider = ({ children }) => {
   const [firstRender, setFirstRender] = useState(true);
 
   const [wishList, setWishList] = useState({});
-
-  const [user, setUser] = useState(null);
-  const [isLogged, setIsLogged] = useState(false);
 
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
@@ -21,12 +21,6 @@ export const AppProvider = ({ children }) => {
     function setDataFromLocalStorage() {
       const cartFromLocalStorage = getLocalStorage("cart");
       const wishListFromLocalStorage = getLocalStorage("wishList");
-      const userFromLocalStorage =
-        getLocalStorage("user") || getSessionStorage("user");
-      if (userFromLocalStorage) {
-        setUser(userFromLocalStorage);
-        setIsLogged(true);
-      }
       if (cartFromLocalStorage) {
         setCart(cartFromLocalStorage);
       }
@@ -101,26 +95,18 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const [toasts, setToasts] = useState([]);
-
   const value = {
     currency: "EGP",
     cart,
+    setCart,
     addToCart,
     removeFromCart,
     wishList,
     toggleWish,
     updateCartQty,
-    user,
-    setUser,
-    setCart,
-    isLogged,
-    setIsLogged,
     handleCloseCart,
     handleShowCart,
     showCart,
-    setToasts,
-    toasts,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
