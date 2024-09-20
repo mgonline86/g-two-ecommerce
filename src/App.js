@@ -1,130 +1,135 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CustomNavbar from "./components/CustomNavbar";
 import ProductList from "./pages/ProductList";
+
 import CartPage from "./pages/CartPage";
 import "./App.css";
 import { useEffect, useState } from "react";
-import { CartContext } from "./CartContext";
-
+import { AppContext } from "./context";
+import WishListPage from "./pages/WishListPage";
+import LoginPage from "./pages/LoginPage";
+import { getLocalStorage, getSessionStorage, updateLocalStorage } from "./lib/helpers";
+import NotFoundPage from "./pages/NotFoundPage";
+import ProtectedRoute from "./pages/ProtectedRoute";
 function App() {
-  const [cart, setCart] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+  const [firstRender, setFirstRender] = useState(true);
+  const [cart, setCart] = useState({});
+  const [wishList, setWishList] = useState({});
+  const [user, setUser] = useState(null);
+  const [isLogged, setIsLogged] = useState(false);
 
-  const [user, setUser] = useState("ahmed");
+  /** Synchronizing with Local Storage */
+  useEffect(() => {
+    function setDataFromLocalStorage() {
+      const cartFromLocalStorage = getLocalStorage("cart");
+      const wishListFromLocalStorage = getLocalStorage("wishList");
+      const userFromLocalStorage = getLocalStorage("user") || getSessionStorage("user");
+      if (userFromLocalStorage) {
+        setUser(userFromLocalStorage);
+        setIsLogged(true);
+      }
+      if (cartFromLocalStorage) {
+        setCart(cartFromLocalStorage);
+      }
+      if (wishListFromLocalStorage) {
+        setWishList(wishListFromLocalStorage);
+      }
+      setFirstRender(false);
+    }
+    if (firstRender) {
+      setDataFromLocalStorage();
+    } else {
+      updateLocalStorage("cart", cart);
+      updateLocalStorage("wishList", wishList);
+    }
+  }, [cart, wishList, firstRender]);
 
   const addToCart = (product) => {
-    // prevState === cart state (on the exact previous render)
-    setCart((prevState) => {
-      // add item to array
-      //! prevState.push(product); dont use the original array
-      // update the same original array
-      //  to update state -> should return a new array
-      // --------------------------------------------------- //
+    const strId = String(product.id);
+    if (cart[strId]) {
+      setCart((prev) => ({
+        ...prev,
+        [strId]: { ...prev[strId], qty: prev[strId].qty + 1 },
+      }));
+    } else {
+      setCart((prev) => ({
+        ...prev,
+        [strId]: { product, qty: 1, timestamp: Date.now() },
+      }));
+    }
+  };
 
-      //1. check if the product is already in the cart
-      //2. add +1 to the qty
-      //3.  if not --> add to the cart with qty = 1
-      // 1. CHECK if exists
-      const idx = prevState.findIndex((item) => item.id === product.id);
-      if (idx > -1) {
-        // if exists
-        const currentProduct = prevState[idx];
-        currentProduct.qty += 1;
+  const removeFromCart = (id) => {
+    const strId = String(id);
+    if (cart[strId]) {
+      setCart((prev) => {
+        // remove cost key from object
+        const { [strId]: _, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
 
-        // local storage save data in string format only
-        // JSON
-        // data -> string
-        const convertedArr = JSON.stringify([...prevState]);
-        localStorage.setItem("cart", convertedArr);
-        return [...prevState];
+  const updateCartQty = (productId, qty) => {
+    const strId = String(productId);
+    if (qty < 1) {
+      return;
+    }
+
+    if (cart[strId]) {
+      setCart((prev) => ({
+        ...prev,
+        [strId]: { ...prev[strId], qty },
+      }));
+    } else {
+      setCart((prev) => ({
+        ...prev,
+        [strId]: { ...prev[strId], qty },
+      }));
+    }
+  };
+
+  const toggleWish = (product) => {
+    setWishList((prevState) => {
+      const inWishList = prevState[product.id];
+      if (inWishList) {
+        const newState = { ...prevState };
+        delete newState[product.id];
+        return newState;
       } else {
-        const newProduct = { ...product, qty: 1 };
-
-        const convertedArr = JSON.stringify([...prevState, newProduct]);
-        localStorage.setItem("cart", convertedArr);
-        return [...prevState, newProduct];
+        return { ...prevState, [product.id]: product };
       }
     });
   };
-
-  const removeFromCart = (product) => {
-    setCart((prevArray) => {
-      const newArray = prevArray.filter((item) => {
-        return item.id !== product.id;
-      });
-
-      const convertedArr = JSON.stringify(newArray);
-      localStorage.setItem("cart", convertedArr);
-      return newArray;
-    });
-  };
-
-  // wishlist code
-  const addToWishlist = (product) => {
-    // prevState === cart state (on the exact previous render)
-    setWishlist((prevState) => {
-      const idx = prevState.findIndex((item) => item.id === product.id);
-      if (idx > -1) {
-        const convertedArr = JSON.stringify([...prevState]);
-        localStorage.setItem("wishlist", convertedArr);
-        return [...prevState];
-      } else {
-        const convertedArr = JSON.stringify([...prevState, product]);
-        localStorage.setItem("wishlist", convertedArr);
-        return [...prevState, product];
-      }
-    });
-  };
-  const removeFromWishlist = (product) => {
-    setWishlist((prevArray) => {
-      const newArray = prevArray.filter((item) => {
-        return item.id !== product.id;
-      });
-
-      const convertedArr = JSON.stringify(newArray);
-      localStorage.setItem("wishlist", convertedArr);
-      return newArray;
-    });
-  };
-
-  // initial render
-  useEffect(() => {
-    // read from local storage
-    const cartData = localStorage.getItem("cart");
-    if (cartData) {
-      const invertedCart = JSON.parse(cartData);
-      setCart(invertedCart);
-    }
-    // read from local storage
-    const wishlistData = localStorage.getItem("wishlist");
-    if (wishlistData) {
-      const invertedWishlist = JSON.parse(wishlistData);
-      setWishlist(invertedWishlist);
-    }
-  }, []);
-
   return (
-    <CartContext.Provider
+    <AppContext.Provider
       value={{
+        currency: "EGP",
         cart,
         addToCart,
         removeFromCart,
-        wishlist,
-        addToWishlist,
-        removeFromWishlist,
+        wishList,
+        toggleWish,
+        updateCartQty,
+        user,
+        setUser,
+        isLogged,
+        setIsLogged,
       }}
     >
       <BrowserRouter>
-        <div>
-          <CustomNavbar />
-
-          <Routes>
-            <Route path="/" element={<ProductList />} />
+        <CustomNavbar />
+        <Routes>
+          <Route path="login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute isLogged={isLogged} />}>
             <Route path="cart" element={<CartPage />} />
-          </Routes>
-        </div>
+            <Route path="wishlist" element={<WishListPage />} />
+            <Route path="/" element={<ProductList />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
-    </CartContext.Provider>
+    </AppContext.Provider>
   );
 }
 

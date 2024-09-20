@@ -1,70 +1,63 @@
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import Container from "react-bootstrap/Container";
-import Stack from "react-bootstrap/Stack";
-import Card from "react-bootstrap/Card";
-import { useContext, useMemo, useState } from "react";
-import { CartContext } from "../CartContext";
+import { useContext, useMemo } from "react";
+import { Button, Table } from "react-bootstrap";
 
-const radios = [
-  { name: "Cash", value: "1" },
-  { name: "Credit", value: "2" },
-  { name: "Wallet", value: "3" },
-];
+import CartRow from "../components/CartRow";
+import { AppContext } from "../context";
+import { Link } from "react-router-dom";
 
-// 1. create file js or jsx
-// 2. function ComponentName
-// 3. return <></>
-// 4. export
 function CartPage() {
-  const [radioValue, setRadioValue] = useState("1");
-  const { cart, addToCart } = useContext(CartContext);
-  // cart => map
-
-  // const total = cart.reduce((prev, item) => prev + item.price * item.qty, 0);
-  const total = useMemo(() => {
-    return cart.reduce((prev, item) => prev + item.price * item.qty, 0);
-  }, [cart]); // depend on what ?
-
+  const { cart, currency } = useContext(AppContext);
+  const lineItems = useMemo(() => Object.values(cart), [cart]);
+  const total = useMemo(
+    () => lineItems.reduce((a, b) => a + b.qty * b.product.price, 0),
+    [lineItems]
+  );
+  if (!lineItems.length)
+    return (
+      <div className="container my-5 text-center">
+        <h1 className="mb-3">Your Cart is empty!</h1>
+        <Button className="fw-bold" variant="primary" as={Link} to="/">
+          &larr; Continue Shopping
+        </Button>
+      </div>
+    );
   return (
     <Container className="my-5">
-      {" "}
-      <Stack gap={3}>
-        {cart.map(function (product, arg2, arg3) {
-          // current item -> arg / item / product / ahmed <- 1st arg
-          // index in the array -> door / idx / index / mahmoud <- 2nd arg
-          // --> shape ->[black-box]--> <SHAPE />
-          // return
-
-          // arg2 ===> index
-          return (
-            <Card key={arg2}>
-              <Card.Body>
-                {product.name} -{product.price}EGP x{product.qty}
-              </Card.Body>
-            </Card>
-          );
-        })}
-        <b>{total} EGP</b>
-      </Stack>{" "}
-      <br />
-      <ButtonGroup>
-        {radios.map((radio, idx) => (
-          <ToggleButton
-            key={idx}
-            id={`radio-${idx}`}
-            type="radio"
-            variant={idx % 2 ? "outline-success" : "outline-danger"}
-            name="radio"
-            value={radio.value}
-            checked={radioValue === radio.value}
-            onChange={(e) => setRadioValue(e.currentTarget.value)}
-          >
-            {radio.name}
-          </ToggleButton>
-        ))}
-      </ButtonGroup>
+      <h1 className="text-center mb-5">Cart</h1>
+      <Table responsive>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          {lineItems.map((item) => (
+            <CartRow key={item.timestamp} lineItem={item} />
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan={5} className="text-end">
+              <h5>Subtotal</h5>
+            </td>
+            <td>
+              <h5>
+                {total} {currency}
+              </h5>
+            </td>
+          </tr>
+        </tfoot>
+      </Table>
     </Container>
   );
 }
+
 export default CartPage;
